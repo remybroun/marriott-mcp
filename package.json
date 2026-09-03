@@ -1,0 +1,49 @@
+{
+  "name": "marriott-mcp",
+  "version": "0.1.0",
+  "description": "Marriott hotel search as an MCP server and CLI, via the Phoenix GraphQL API driven through a real Chrome session.",
+  "type": "module",
+  "license": "MIT",
+  "author": "remybroun",
+  "homepage": "https://github.com/remybroun/marriott-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remybroun/marriott-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/remybroun/marriott-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "marriott",
+    "bonvoy",
+    "hotels",
+    "hotel-search",
+    "travel",
+    "cli",
+    "graphql",
+    "chrome-devtools-protocol"
+  ],
+  "bin": {
+    "marriott": "./bin/marriott.js",
+    "marriott-mcp": "./bin/marriott-mcp.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "search": "node bin/marriott.js search",
+    "mcp": "node bin/marriott-mcp.js",
+    "test": "node test/itinerary.test.mjs && node test/prefs.test.mjs",
+    "plan": "node bin/marriott.js plan",
+    "config": "node bin/marriott.js config"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {}
+}

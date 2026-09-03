@@ -1,0 +1,60 @@
+{
+  "operationName": "phoenixShopDatedSearchByGeoQuery",
+  "variables": {
+    "search": {
+      "latitude": 41.3874374,
+      "longitude": 2.1686496,
+      "distance": 80467.2,
+      "sooOptions": {
+        "weekType": "WEEKEND_ONLY",
+        "rewardsLevel": "ANONYMOUS",
+        "searchCity": "Barcelona",
+        "searchState": "CT",
+        "searchCountry": "ES",
+        "deviceType": "DESKTOP_WEB",
+        "searchDestinationType": "CITY",
+        "sooModel": "OUT_OF_SCOPE"
+      },
+      "options": {
+        "startDate": "2026-10-15",
+        "endDate": "2026-10-18",
+        "includeMandatoryFees": true,
+        "numberInParty": 2,
+        "rateRequestTypes": [{ "type": "STANDARD", "value": "" }],
+        "quantity": 1,
+        "includeTaxesAndFees": false,
+        "includeUnavailableProperties": false,
+        "customerId": ""
+      },
+      "facets": {
+        "terms": [
+          { "type": "BRANDS", "dimensions": [] },
+          { "type": "AMENITIES", "dimensions": [] },
+          { "type": "PROPERTY_TYPES", "dimensions": [] },
+          { "type": "ACTIVITIES", "dimensions": [] },
+          { "type": "CITIES", "dimensions": [] },
+          { "type": "STATES", "dimensions": [] },
+          { "type": "COUNTRIES", "dimensions": [] },
+          { "type": "HOTEL_SERVICE_TYPES", "dimensions": [] },
+          { "type": "MEETINGS_EVENTS", "dimensions": [] },
+          { "type": "TRANSPORTATION_TYPES", "dimensions": [] },
+          { "type": "LEISURE_REGIONS", "dimensions": [] }
+        ],
+        "ranges": [
+          { "type": "PRICE", "dimensions": [], "endpoints": ["0", "100", "200", "overflow"] },
+          { "type": "DISTANCE", "dimensions": [], "endpoints": ["0", "4830", "14520", "80470"] }
+        ]
+      }
+    },
+    "limit": 40,
+    "offset": 0,
+    "sort": { "fields": [{ "field": "DISTANCE", "direction": "ASC" }] },
+    "filter": [
+      "HOTEL_MARKETING_CAPTION",
+      "RESORT_FEE_DESCRIPTION",
+      "DESTINATION_FEE_DESCRIPTION",
+      "TOURISM_MARKETING_FEE_DESCRIPTION",
+      "SURCHARGE_ORDINANCE_COST_DESCRIPTION"
+    ]
+  }
+}
