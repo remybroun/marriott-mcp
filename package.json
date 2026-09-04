@@ -42,6 +42,8 @@
   "files": [
     "bin/",
     "src/",
+    "skills/",
+    "assets/",
     "README.md",
     "LICENSE"
   ],

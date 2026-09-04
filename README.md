@@ -1,4 +1,12 @@
-# marriott-mcp
+<p align="center">
+  <img src="./assets/marriott-m.svg" alt="Marriott" height="72">
+</p>
+
+<h1 align="center">marriott-mcp</h1>
+
+<p align="center">
+  <sub>Unofficial. Not affiliated with, endorsed by, or connected to Marriott International.</sub>
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/MCP-server-1F1F1F?style=for-the-badge&logo=modelcontextprotocol&logoColor=white" alt="MCP server">
@@ -33,6 +41,30 @@ rates endpoint.
 
 **Requirements:** Node ≥ 22 and desktop Google Chrome. There are no npm dependencies, so
 there is nothing to `npm install`.
+
+### With `npx` (nothing to clone)
+
+```bash
+npx -y -p github:remybroun/marriott-mcp marriott --help
+npx -y -p github:remybroun/marriott-mcp marriott warmup
+npx -y -p github:remybroun/marriott-mcp marriott search "Barcelona, Spain" --nights 1
+```
+
+`-p` names the package, then `marriott` picks the CLI binary out of it. Dropping `-p`
+runs the other binary, `marriott-mcp` (the stdio MCP server), because that one matches
+the package name.
+
+Once this is published to npm, the shorter `npx -y -p marriott-mcp marriott ...` will work
+the same way. Until then, use the `github:` form above. It is the same code, resolved
+straight from the repo.
+
+Setting a shell alias makes it a one-word command:
+
+```bash
+alias marriott='npx -y -p github:remybroun/marriott-mcp marriott'
+```
+
+### From a clone
 
 ```bash
 git clone https://github.com/remybroun/marriott-mcp.git
@@ -106,14 +138,33 @@ Prefer to drive it from Claude instead of the terminal? See [MCP server](#mcp-se
 
 The same search, exposed as MCP tools so Claude Code (or any MCP client) can run it.
 
-Claude Code:
+Claude Code, via `npx`, with no clone and nothing on disk to point at:
 
 ```bash
-claude mcp add marriott --scope user -- node /absolute/path/to/marriott-mcp/bin/marriott-mcp.js
+claude mcp add marriott --scope user -- npx -y github:remybroun/marriott-mcp
 claude mcp list          # marriott: ... - ✔ Connected
 ```
 
+Or from a clone, if you have one:
+
+```bash
+claude mcp add marriott --scope user -- node /absolute/path/to/marriott-mcp/bin/marriott-mcp.js
+```
+
 Any other MCP client (Claude Desktop, Cursor, Zed, ...), in its JSON config:
+
+```json
+{
+  "mcpServers": {
+    "marriott": {
+      "command": "npx",
+      "args": ["-y", "github:remybroun/marriott-mcp"]
+    }
+  }
+}
+```
+
+Or pointing at a clone:
 
 ```json
 {
@@ -126,9 +177,9 @@ Any other MCP client (Claude Desktop, Cursor, Zed, ...), in its JSON config:
 }
 ```
 
-The path must be absolute. If you ran `npm link`, `"command": "marriott-mcp"` with no
-args works too. Run `marriott warmup` once before the first tool call, or the first
-search will sit through the Akamai challenge.
+With `node`, the path must be absolute. If you ran `npm link`, `"command": "marriott-mcp"`
+with no args works too. Run `marriott warmup` once before the first tool call, or the
+first search will sit through the Akamai challenge.
 
 Then just ask in plain language: *"cheapest Marriott in Istanbul on Nov 3"*.
 
@@ -167,6 +218,31 @@ the MCP tools use `src/format.js` rather than `src/render.js`: the latter writes
 the terminal, which is noise in a JSON-RPC channel and literal garbage in a chat client.
 
 Env: `MARRIOTT_IDLE_MS`, `MARRIOTT_SHOW`, `MARRIOTT_VERBOSE`, `MARRIOTT_ATTACH`.
+
+---
+
+## Claude Code skill
+
+[`skills/marriott-hotels/`](./skills/marriott-hotels) is a Claude Code skill that teaches
+Claude *how to use* this tool: which front end to reach for, the order to ask questions
+in, and the four ways a Marriott result misleads you if you read it at face value (the
+multi-night average, the silently-ignored rate code, the editorial tier grades, the retry
+that escalates an Akamai challenge).
+
+Install it by dropping it into your skills directory:
+
+```bash
+mkdir -p ~/.claude/skills
+curl -sL https://github.com/remybroun/marriott-mcp/archive/refs/heads/main.tar.gz \
+  | tar -xz --strip-components=2 -C ~/.claude/skills marriott-mcp-main/skills
+```
+
+From a clone, `cp -r skills/marriott-hotels ~/.claude/skills/` does the same. Claude picks
+it up on the next session; it fires on its own when you ask about hotels.
+
+The skill and the MCP server are independent. The skill works against the CLI alone, so it
+is useful without the server. They are better together, though, and installing both is
+the normal setup.
 
 ---
 
