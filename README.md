@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/Chrome-required-4285F4?logo=googlechrome&logoColor=white" alt="Chrome required">
   <img src="https://img.shields.io/badge/GraphQL-Phoenix%20API-E10098?logo=graphql&logoColor=white" alt="GraphQL">
   <img src="https://img.shields.io/badge/Claude-Code-D97757?logo=claude&logoColor=white" alt="Claude Code">
-  <img src="https://img.shields.io/badge/tests-9%20passing-3FB950?logo=nodedotjs&logoColor=white" alt="9 tests passing">
+  <img src="https://img.shields.io/badge/tests-14%20passing-3FB950?logo=nodedotjs&logoColor=white" alt="14 tests passing">
 </p>
 
 Hotel search from the terminal against Marriott's internal "Phoenix" GraphQL API.
@@ -97,7 +97,7 @@ the clone, and `rm -rf ~/.marriott-mcp`.
 ### Verify the install
 
 ```bash
-npm test                                  # 9 unit tests, no browser, instant
+npm test                                  # 14 unit tests, no browser, instant
 marriott places "Barc"                    # first live call: 30-60s while Akamai settles
 marriott search "Barcelona, Spain" --nights 1
 ```
