@@ -646,6 +646,11 @@ without putting the code in the conversation; pass `no_code: true` to ignore the
 `CLUSTER` is the generic carrier: any Marriott cluster/corporate code works via `--code`.
 Points and a corporate code are mutually exclusive.
 
+A `points` search gets each hotel's rates back as one entry per type, in an order that
+depends on the hotel's reservation system, so rows pick the cash rate and the award (MRW)
+rate by kind. Each row has `points` (the whole stay) and `pointsPerNight`, and the tables
+add a points-per-night column when any hotel has an award rate.
+
 **No codes ship in this repo.** There is no built-in or default corporate code, by
 design. `CLUSTER` is a mechanism, and the value is your own entitlement, so you supply it
 once and it stays on your machine. See [Your own rate codes](#your-own-rate-codes-user-preferences).

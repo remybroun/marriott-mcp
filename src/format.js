@@ -87,8 +87,10 @@ export function resultsTable(rows, meta = {}) {
   }
   out.push('');
 
-  out.push('| Tier | Hotel | Brand | Dist | Rating | /night | All-in | /tier-pt | |');
-  out.push('|---|---|---|---|---:|---:|---:|---:|---|');
+  // Award prices only come back when points were asked for: show their column only then.
+  const showPoints = rows.some((r) => r.pointsPerNight != null);
+  out.push('| Tier | Hotel | Brand | Dist | Rating | /night | All-in | /tier-pt |' + (showPoints ? ' Points/night |' : '') + ' |');
+  out.push('|---|---|---|---|---:|---:|---:|---:|' + (showPoints ? '---:|' : '') + '---|');
   for (const r of rows) {
     out.push(
       '| ' +
@@ -101,6 +103,7 @@ export function resultsTable(rows, meta = {}) {
           fmt(r.price, r.currency),
           fmt(r.totalPerNight, r.currency) + (r.converted ? '~' : '') + (codeMissed(r) ? '!' : ''),
           r.eurPerTier == null ? '—' : r.eurPerTier.toFixed(1),
+          ...(showPoints ? [r.pointsPerNight == null ? '—' : r.pointsPerNight.toLocaleString('en-US')] : []),
           markFor(r),
         ].join(' | ') +
         ' |',

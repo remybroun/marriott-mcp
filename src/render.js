@@ -183,6 +183,9 @@ export function renderScan(days, meta = {}) {
  * Full results view: cards + highlighted table.
  * `rows` come from toRows(); this function computes tierScore/eurPerTier.
  */
+/** A points figure with thousands separators, or a grey dash for none. */
+const fmtPoints = (n) => (n == null ? c.grey('—') : n.toLocaleString('en-US'));
+
 export function renderResults(rows, meta = {}) {
   if (!rows.length) {
     console.log('No available properties for those dates and filters.');
@@ -206,7 +209,9 @@ export function renderResults(rows, meta = {}) {
   const isValue = (r) => picks.bestValue && r.id === picks.bestValue.id;
   const isQuality = (r) => picks.bestQuality && r.id === picks.bestQuality.id;
 
-  const W = { mark: 3, tier: 4, hotel: 38, brand: 17, dist: 6, rtg: 4, night: 11, total: 12, pt: 6 };
+  // Award prices only come back when points were asked for: show their column only then.
+  const showPoints = rows.some((r) => r.pointsPerNight != null);
+  const W = { mark: 3, tier: 4, hotel: 38, brand: 17, dist: 6, rtg: 4, night: 11, total: 12, pt: 6, pts: 10 };
   const head =
     padEnd('', W.mark) +
     ' ' + padEnd('TIER', W.tier) +
@@ -216,12 +221,14 @@ export function renderResults(rows, meta = {}) {
     ' ' + padStart('RTG', W.rtg) +
     ' ' + padStart('/NIGHT', W.night) +
     ' ' + padStart('ALL-IN', W.total) +
-    ' ' + padStart('/PT', W.pt);
+    ' ' + padStart('/PT', W.pt) +
+    (showPoints ? ' ' + padStart('PTS/NIGHT', W.pts) : '');
   console.log(c.bold(head));
   console.log(
     c.dim(
       '─'.repeat(
-        W.mark + W.tier + W.hotel + W.brand + W.dist + W.rtg + W.night + W.total + W.pt + 8,
+        W.mark + W.tier + W.hotel + W.brand + W.dist + W.rtg + W.night + W.total + W.pt + 8 +
+          (showPoints ? W.pts + 1 : 0),
       ),
     ),
   );
@@ -251,7 +258,8 @@ export function renderResults(rows, meta = {}) {
         ' ' + padStart(colourRating(r.rating), W.rtg) +
         ' ' + padStart(fmtMoney(r.price, r.currency), W.night) +
         ' ' + padStart(totalCell, W.total) +
-        ' ' + padStart(ptCell, W.pt),
+        ' ' + padStart(ptCell, W.pt) +
+        (showPoints ? ' ' + padStart(fmtPoints(r.pointsPerNight), W.pts) : ''),
     );
   }
 

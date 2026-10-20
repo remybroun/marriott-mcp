@@ -518,13 +518,34 @@ export const BRAND_ANCHORS = [
   { name: 'Sydney', latitude: -33.8688, longitude: 151.2093 },
 ];
 
+/**
+ * A property's cash rate and its points rate from its `rates`. A search that asks
+ * for several rate types (`--rate points` asks for MRW, STANDARD and P17) gets one
+ * entry per type back, in an order that depends on the hotel's reservation system:
+ * MARSHA hotels list the points rate first, DSP ones an unavailable P17, ACRS ones
+ * the cash rate. So the first entry is not the cash rate: pick each by its kind,
+ * a bookable one first. A hotel with no cash rate falls back to its points rate,
+ * so its status still says whether it can be booked.
+ */
+export function pickRates(rates = []) {
+  const list = (rates ?? []).filter(Boolean);
+  const sellable = (r) => r.status?.code === 'AvailableForSale';
+  const isCash = (r) => !!r.rateModes?.lowestAverageRate;
+  const isPoints = (r) => r.rateModes?.pointsPerUnit?.points != null;
+  const cash = list.find((r) => isCash(r) && sellable(r)) ?? list.find(isCash);
+  const pointsRate = list.find((r) => isPoints(r) && sellable(r)) ?? null;
+  return { rate: cash ?? pointsRate ?? list[0], pointsRate };
+}
+
 /** Flatten a search connection into plain rows for display. */
 export function toRows(conn) {
   return (conn.edges ?? []).map(({ node }) => {
     const p = node.property ?? {};
     const b = p.basicInformation ?? {};
-    const rate = node.rates?.[0];
+    const { rate, pointsRate } = pickRates(node.rates);
     const mode = rate?.rateModes?.lowestAverageRate ?? {};
+    const points = pointsRate?.rateModes?.pointsPerUnit?.points ?? null;
+    const stayNights = pointsRate?.lengthOfStay ?? rate?.lengthOfStay ?? null;
     // lowestAverageRate is per night, averaged over the stay.
     const nightly = money(mode.amount) ?? money(mode.amountPlusMandatoryFees);
     const total = money(mode.totalAmount);
@@ -552,6 +573,9 @@ export function toRows(conn) {
       membersOnly: rate?.membersOnly ?? null,
       status: rate?.status?.code ?? '',
       bookable: b.bookable ?? null,
+      // Points for the whole stay, and averaged per night, from the award (MRW) rate.
+      points,
+      pointsPerNight: points != null && stayNights ? Math.round(points / stayNights) : null,
     };
   });
 }
